@@ -41,8 +41,8 @@ class _WeeklyReportScreenState extends State<WeeklyReportScreen> {
             height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.transparent,                // transparent inside
-              border: Border.all(color: Colors.grey, width: 1.5), // optional border
+              color: Colors.transparent,                
+              border: Border.all(color: Colors.grey, width: 1.5), 
             ),
             child: const Icon(
               Icons.arrow_back,
@@ -58,8 +58,8 @@ class _WeeklyReportScreenState extends State<WeeklyReportScreen> {
             Text(
               'My Diary',
               style: TextStyle(
-                color: Colors.grey,     // black color
-                fontSize: 14,            // smaller font size
+                color: Colors.grey,     
+                fontSize: 14,         
                 fontWeight: FontWeight.w400,
               ),
             ),
@@ -69,7 +69,7 @@ class _WeeklyReportScreenState extends State<WeeklyReportScreen> {
                   TextSpan(
                     text: 'Weekly ',
                     style: TextStyle(
-                      color: Colors.black,    // black color
+                      color: Colors.black,    
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -77,7 +77,7 @@ class _WeeklyReportScreenState extends State<WeeklyReportScreen> {
                   TextSpan(
                     text: 'Report',
                     style: TextStyle(
-                      color: Colors.red,      // red color
+                      color: Colors.red,      
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -98,7 +98,7 @@ class _WeeklyReportScreenState extends State<WeeklyReportScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.transparent,
-                border: Border.all(color: Colors.grey, width: 1.5), // optional border
+                border: Border.all(color: Colors.grey, width: 1.5), 
               ),
               child: Icon(
                 Icons.download,
