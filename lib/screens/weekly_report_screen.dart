@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:weekly_report_app/widgets/Weekly_report_widgets.dart';
-
+import 'package:syncfusion_flutter_charts/charts.dart';
 class WeeklyReportScreen extends StatefulWidget {
   const WeeklyReportScreen({super.key});
 
@@ -480,7 +480,6 @@ class NutritionReviewSection extends StatelessWidget {
                       ),
                     ],
                   ),
-
                   barTouchData: BarTouchData(
                     enabled: true,
                     touchTooltipData: BarTouchTooltipData(
@@ -497,14 +496,12 @@ class NutritionReviewSection extends StatelessWidget {
                           ),
                         );
                       },
-                      tooltipRoundedRadius: 4,
                       tooltipPadding: const EdgeInsets.all(4),
                       tooltipMargin: 8,
                       fitInsideHorizontally: true,
                       fitInsideVertically: true,
                     ),
                   ),
-
                   gridData: FlGridData(show: false),
                   borderData: FlBorderData(show: false),
                   maxY: 1000,
@@ -696,8 +693,8 @@ class BodyMetricsSection extends StatelessWidget {
   }
 }
 
-// Section 4: Overall Summary
 
+// Section 4: Overall Summary
 class OverallSummarySection extends StatelessWidget {
   const OverallSummarySection({super.key});
 
@@ -712,94 +709,21 @@ class OverallSummarySection extends StatelessWidget {
             const Text(
               'Hey Muniba, you did good!',
               style: TextStyle(
-                  color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold),
+                color: Colors.red,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const Text(
               'Keep up the great work and stay consistent!',
-              style: TextStyle(color: Colors.black54,fontSize: 14),
+              style: TextStyle(color: Colors.black54, fontSize: 14),
             ),
-            const SizedBox(height: 60),
+            const SizedBox(height: 40),
 
-            // Pie Chart with center label
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                SizedBox(
-                  height: 200,
-                  width: 200,
-                  child: PieChart(
-                    PieChartData(
-                      sections: [
-                        PieChartSectionData(
-                          value: 30,
-                          color: Colors.green,
-                          radius: 20,
-                          title: 'Steps\n9,286',
-                          titleStyle: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green,
-                          ),
-                          titlePositionPercentageOffset: 2.2,
-                        ),
-                        PieChartSectionData(
-                          value: 20,
-                          color: Colors.purple,
-                          radius: 20,
-                          title: 'Sleep\n48h 12m',
-                          titleStyle: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.purple,
-                          ),
-                          titlePositionPercentageOffset: 2.7,
-                        ),
-                        PieChartSectionData(
-                          value: 15,
-                          color: Colors.orange,
-                          radius: 20,
-                          title: 'Workouts\n148 min',
-                          titleStyle: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.orange,
-                          ),
-                          titlePositionPercentageOffset: 2.6,
-                        ),
-                        PieChartSectionData(
-                          value: 35,
-                          color: Colors.grey,
-                          radius: 10,
-                          showTitle: false, // Explicitly disable showing any title/value
-                        ),
-                      ],
-                      centerSpaceRadius: 70,
-                      sectionsSpace: 0,
-                    ),
-                  ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text(
-                      'FIT Score',
-                      style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    Text(
-                      '65',
-                      style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 100),
+            // CustomPaint-based FitScoreChart
+            FitScoreChart(),
+
+            const SizedBox(height: 70),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -816,8 +740,8 @@ class OverallSummarySection extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
                   onPressed: () {
-                    final state =
-                    context.findAncestorStateOfType<_WeeklyReportScreenState>();
+                    // This finds the state of the parent WeeklyReportScreen
+                    final state = context.findAncestorStateOfType<_WeeklyReportScreenState>();
                     state?._previousPage();
                   },
                 ),
@@ -828,8 +752,8 @@ class OverallSummarySection extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.arrow_forward_ios, color: Colors.black),
                   onPressed: () {
-                    final state =
-                    context.findAncestorStateOfType<_WeeklyReportScreenState>();
+                    // This finds the state of the parent WeeklyReportScreen
+                    final state = context.findAncestorStateOfType<_WeeklyReportScreenState>();
                     state?._nextPage();
                   },
                 ),
@@ -837,12 +761,185 @@ class OverallSummarySection extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             const TipCard(
-              text:
-              'Today you took 23% less calories than your average. Keep your protein intake to at least 80% of recommended value even if you are trying to lose weight.',
+              text: 'Today you took 23% less calories than your average. Keep your protein intake to at least 80% of recommended value even if you are trying to lose weight.',
             ),
           ],
         ),
       ),
     );
   }
+}
+
+
+
+class FitScoreChart extends StatelessWidget {
+  const FitScoreChart({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Chart data
+    final List<_FitScoreData> chartData = [
+      _FitScoreData('Steps', 35, Colors.green),
+      _FitScoreData('Activity', 30, Colors.amber),
+      _FitScoreData('Sleep', 25, Colors.purple),
+      _FitScoreData('Remaining', 10, Colors.grey.shade300),
+    ];
+
+    // Calculate cumulative angles for each segment
+    double total = chartData.fold(0, (sum, item) => sum + item.value);
+    int greenDeg = ((chartData[0].value / total) * 360).toInt();
+    int amberDeg = ((chartData[1].value / total) * 360).toInt();
+    int purpleDeg = ((chartData[2].value / total) * 360).toInt();
+    int greyDeg = ((chartData[3].value / total) * 360).toInt();
+
+    return SizedBox(
+      width: 300, // Increased size
+      height: 300, // Increased size
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          SfCircularChart(
+            backgroundColor: Colors.transparent,
+            series: <DoughnutSeries<_FitScoreData, String>>[
+              // Green segment (start rounded)
+              DoughnutSeries<_FitScoreData, String>(
+                dataSource: [chartData[0]],
+                xValueMapper: (data, _) => data.category,
+                yValueMapper: (data, _) => data.value,
+                pointColorMapper: (data, _) => data.color,
+                innerRadius: '80%',
+                radius: '92%',
+                startAngle: 270,
+                endAngle: 270 + greenDeg,
+                cornerStyle: CornerStyle.startCurve,
+                dataLabelSettings: const DataLabelSettings(isVisible: false),
+              ),
+              // Amber segment (normal)
+              DoughnutSeries<_FitScoreData, String>(
+                dataSource: [chartData[1]],
+                xValueMapper: (data, _) => data.category,
+                yValueMapper: (data, _) => data.value,
+                pointColorMapper: (data, _) => data.color,
+                innerRadius: '80%',
+                radius: '92%',
+                startAngle: 270 + greenDeg,
+                endAngle: 270 + greenDeg + amberDeg,
+                dataLabelSettings: const DataLabelSettings(isVisible: false),
+                cornerStyle: CornerStyle.bothFlat,
+              ),
+              // Purple segment (end rounded)
+              DoughnutSeries<_FitScoreData, String>(
+                dataSource: [chartData[2]],
+                xValueMapper: (data, _) => data.category,
+                yValueMapper: (data, _) => data.value,
+                pointColorMapper: (data, _) => data.color,
+                innerRadius: '80%',
+                radius: '92%',
+                startAngle: 270 + greenDeg + amberDeg,
+                endAngle: 270 + greenDeg + amberDeg + purpleDeg,
+                dataLabelSettings: const DataLabelSettings(isVisible: false),
+                cornerStyle: CornerStyle.endCurve,
+              ),
+              // Grey segment (smaller, normal)
+              DoughnutSeries<_FitScoreData, String>(
+                dataSource: [chartData[3]],
+                xValueMapper: (data, _) => data.category,
+                yValueMapper: (data, _) => data.value,
+                pointColorMapper: (data, _) => data.color,
+                innerRadius: '90%',
+                radius: '85%',
+                startAngle: 270 + greenDeg + amberDeg + purpleDeg,
+                endAngle: 270 + greenDeg + amberDeg + purpleDeg + greyDeg,
+                dataLabelSettings: const DataLabelSettings(isVisible: false),
+                cornerStyle: CornerStyle.bothFlat,
+              ),
+            ],
+          ),
+          // Center text
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Text(
+                'FIT Score',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                '80',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 48,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          // Positioned text labels for chart segments (values adjusted for new size)
+          Positioned(
+            top: -2,
+            right: 200,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: const [
+                Text(
+                  'Steps',
+                  style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold ,fontSize: 11.5),
+                ),
+                Text(
+                  '9,266',
+                  style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold,fontSize: 11.5),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 50,
+            right: -6.75,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  'Workouts',
+                  style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold,fontSize: 11.5,),
+                ),
+                Text(
+                  '200 mins',
+                  style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold,fontSize: 11.5,),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: -2,
+            right: 189,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: const [
+                Text(
+                  'Sleep',
+                  style: TextStyle(color: Colors.purple, fontWeight: FontWeight.bold,fontSize: 11.5),
+                ),
+                Text(
+                  '45 Hours',
+                  style: TextStyle(color: Colors.purple, fontWeight: FontWeight.bold,fontSize: 11.5),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Model class
+class _FitScoreData {
+  final String category;
+  final double value;
+  final Color color;
+
+  const _FitScoreData(this.category, this.value, this.color);
 }
